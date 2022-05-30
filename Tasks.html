@@ -2,7 +2,7 @@
 <html>
 <head><meta charset="utf-8" />
 
-<title>Tasks_from_Taxa</title>
+<title>Tasks</title>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.1.10/require.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
@@ -13581,10 +13581,11 @@ f_i(j) = max[2j, E(f_{i + 1})],
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[2]:</div>
+<div class="prompt input_prompt">In&nbsp;[8]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> <span class="c1"># будем пользоваться некоторыми возможностями этой библиотеки</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span> <span class="c1"># для работы с данными</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span> <span class="c1"># для вывода данных в виде таблиц</span>
 </pre></div>
 
     </div>
@@ -13606,42 +13607,55 @@ f_i(j) = max[2j, E(f_{i + 1})],
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[11]:</div>
+<div class="prompt input_prompt">In&nbsp;[26]:</div>
 <div class="inner_cell">
     <div class="input_area">
-<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># f[i, j] - ожидаемый выигрыш, если при i-м вращении выпало j</span>
+<div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># f[i, j] - ожидаемый выигрыш, если при i-м вращении выпало j</span>
 
-<span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span> <span class="c1"># сколько чисел</span>
-<span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span> <span class="c1"># сколько вращений</span>
+<span class="n">n</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>  <span class="c1"># сколько чисел</span>
+<span class="n">m</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>  <span class="c1"># сколько вращений</span>
 <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span>
-<span class="n">p</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">input</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span> <span class="c1"># вероятности</span>
-<span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span> <span class="c1"># цена игры</span>
+<span class="n">p</span> <span class="o">+=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">float</span><span class="p">,</span> <span class="nb">input</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">()))</span>  <span class="c1"># вероятности</span>
+<span class="n">x</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>  <span class="c1"># цена игры</span>
 
-<span class="k">def</span> <span class="nf">Ef</span><span class="p">(</span><span class="n">i</span><span class="p">):</span> <span class="c1"># считаем E(f(i))</span>
+
+<span class="k">def</span> <span class="nf">Ef</span><span class="p">(</span><span class="n">i</span><span class="p">):</span>  <span class="c1"># считаем E(f(i))</span>
     <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span>
-    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="p">:</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">res</span> <span class="o">+=</span> <span class="n">p</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">k</span><span class="p">]</span>
     <span class="k">return</span> <span class="n">res</span>
 
-<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># определяем f для всех исходов последнего вращения</span>
+
+<span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>  <span class="c1"># определяем f для всех исходов последнего вращения</span>
     <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j</span>
 
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># динамически определяем f для всех i и j</span>
+<span class="n">tabledata</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># ячейки таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tabledata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>  <span class="c1"># динамически определяем f для всех i и j</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">break</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Вращение&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j</span><span class="p">,</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;     Если выпало&#39;</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="s1">&#39;то выгодней&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;закончить&#39;</span><span class="p">)</span>
+            <span class="n">tabledata</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;закончить&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;продолжить&#39;</span><span class="p">)</span>
-
-<span class="n">prof</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span> <span class="c1"># находим прибыль, которую мы ожидаем получить при оптимальной стратегии игры</span>
+            <span class="n">tabledata</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;продолжить&#39;</span>
+<span class="n">prof</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span>  <span class="c1"># находим прибыль, которую мы ожидаем получить при оптимальной стратегии игры</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ожидание прибыли:&#39;</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># строки таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">In</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Если выпало &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, то выгодней:&#39;</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># столбцы таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">C</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Вращение &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tabledata</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">In</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">C</span><span class="p">)</span> <span class="c1"># вывод таблицы</span>
 </pre></div>
 
     </div>
@@ -13662,27 +13676,77 @@ f_i(j) = max[2j, E(f_{i + 1})],
 4
 0.3 0.25 0.2 0.15 0.1
 5
-Вращение 3 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней закончить
-     Если выпало 4 то выгодней закончить
-     Если выпало 5 то выгодней закончить
-Вращение 2 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней продолжить
-     Если выпало 4 то выгодней закончить
-     Если выпало 5 то выгодней закончить
-Вращение 1 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней продолжить
-     Если выпало 4 то выгодней закончить
-     Если выпало 5 то выгодней закончить
 Ожидание прибыли: 2.309375
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[26]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Вращение 1</th>
+      <th>Вращение 2</th>
+      <th>Вращение 3</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Если выпало 1, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 2, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 3, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>закончить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 4, то выгодней:</td>
+      <td>закончить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 5, то выгодней:</td>
+      <td>закончить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 </div>
@@ -13702,7 +13766,7 @@ f_i(j) = max[2j, E(f_{i + 1})],
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[10]:</div>
+<div class="prompt input_prompt">In&nbsp;[27]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># f[i, j] - ожидаемый выигрыш, если при i-м вращении выпало j</span>
@@ -13721,23 +13785,35 @@ f_i(j) = max[2j, E(f_{i + 1})],
 
 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># определяем f для всех исходов последнего вращения</span>
     <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">j</span>
+    
+<span class="n">tabledata</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># ячейки таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tabledata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># динамически определяем f для всех i и j</span>
     <span class="k">if</span> <span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
         <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
         <span class="k">break</span>
 
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Вращение&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j</span><span class="p">,</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;     Если выпало&#39;</span><span class="p">,</span> <span class="n">j</span><span class="p">,</span> <span class="s1">&#39;то выгодней&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">j</span> <span class="o">&gt;</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;закончить&#39;</span><span class="p">)</span>
+            <span class="n">tabledata</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;закончить&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;продолжить&#39;</span><span class="p">)</span>
+            <span class="n">tabledata</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;продолжить&#39;</span>
 
 <span class="n">prof</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span> <span class="c1"># находим прибыль, которую мы ожидаем получить при оптимальной стратегии игры</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ожидание прибыли:&#39;</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># строки таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">In</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Если выпало &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;, то выгодней:&#39;</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># столбцы таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">C</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Вращение &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tabledata</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">In</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">C</span><span class="p">)</span> <span class="c1"># вывод таблицы</span>
 </pre></div>
 
     </div>
@@ -13758,45 +13834,104 @@ f_i(j) = max[2j, E(f_{i + 1})],
 5
 0.125 0.125 0.125 0.125 0.125 0.125 0.125 0.125
 5
-Вращение 4 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней продолжить
-     Если выпало 4 то выгодней продолжить
-     Если выпало 5 то выгодней закончить
-     Если выпало 6 то выгодней закончить
-     Если выпало 7 то выгодней закончить
-     Если выпало 8 то выгодней закончить
-Вращение 3 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней продолжить
-     Если выпало 4 то выгодней продолжить
-     Если выпало 5 то выгодней продолжить
-     Если выпало 6 то выгодней закончить
-     Если выпало 7 то выгодней закончить
-     Если выпало 8 то выгодней закончить
-Вращение 2 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней продолжить
-     Если выпало 4 то выгодней продолжить
-     Если выпало 5 то выгодней продолжить
-     Если выпало 6 то выгодней продолжить
-     Если выпало 7 то выгодней закончить
-     Если выпало 8 то выгодней закончить
-Вращение 1 :
-     Если выпало 1 то выгодней продолжить
-     Если выпало 2 то выгодней продолжить
-     Если выпало 3 то выгодней продолжить
-     Если выпало 4 то выгодней продолжить
-     Если выпало 5 то выгодней продолжить
-     Если выпало 6 то выгодней продолжить
-     Если выпало 7 то выгодней закончить
-     Если выпало 8 то выгодней закончить
 Ожидание прибыли: 8.3828125
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[27]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>Вращение 1</th>
+      <th>Вращение 2</th>
+      <th>Вращение 3</th>
+      <th>Вращение 4</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Если выпало 1, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 2, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 3, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 4, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 5, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>закончить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 6, то выгодней:</td>
+      <td>продолжить</td>
+      <td>продолжить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 7, то выгодней:</td>
+      <td>закончить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+    </tr>
+    <tr>
+      <td>Если выпало 8, то выгодней:</td>
+      <td>закончить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+      <td>закончить</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 </div>
@@ -13824,7 +13959,7 @@ f_i(j) = max(w[j], E(f_{i + 1}))
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[13]:</div>
+<div class="prompt input_prompt">In&nbsp;[30]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="n">f</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># f[i, j] - ожидаемый доход, если в день i наилучшее предложение - это j</span>
@@ -13847,21 +13982,33 @@ f_i(j) = max(w[j], E(f_{i + 1}))
 
 <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># определяем f для всех исходов последнего дня</span>
     <span class="n">f</span><span class="p">[</span><span class="n">m</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">w</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+    
+<span class="n">tabledata</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># ячейки таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="n">row</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">tabledata</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
 
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span> <span class="c1"># динамически определяем f для всех i и j</span>
-    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;День&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;:&#39;</span><span class="p">)</span>
     <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
-        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;     Если предложили&#39;</span><span class="p">,</span> <span class="n">w</span><span class="p">[</span><span class="n">j</span><span class="p">],</span> <span class="s1">&#39;то выгодней&#39;</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">&gt;</span> <span class="n">Ef</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)):</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;закончить&#39;</span><span class="p">)</span>
+            <span class="n">tabledata</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;продать&#39;</span>
         <span class="k">else</span><span class="p">:</span>
-            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;продолжить&#39;</span><span class="p">)</span>
+            <span class="n">tabledata</span><span class="p">[</span><span class="n">j</span> <span class="o">-</span> <span class="mi">1</span><span class="p">][</span><span class="n">i</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="s1">&#39;подождать&#39;</span>
 
 <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">Ef</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 
 <span class="n">prof</span> <span class="o">=</span> <span class="n">f</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span> <span class="c1"># находим прибыль, которую мы ожидаем получить при оптимальной стратегии игры</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Ожидание прибыли:&#39;</span><span class="p">,</span> <span class="n">prof</span><span class="p">)</span>
+
+<span class="n">In</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># строки таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">In</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;Если предложили &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">w</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="s1">&#39;, то выгодней:&#39;</span><span class="p">)</span>
+<span class="n">C</span> <span class="o">=</span> <span class="p">[]</span> <span class="c1"># столбцы таблицы</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+    <span class="n">C</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;День &#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span>
+
+<span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">tabledata</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">In</span><span class="p">,</span> <span class="n">columns</span><span class="o">=</span><span class="n">C</span><span class="p">)</span> <span class="c1"># вывод таблицы</span>
 </pre></div>
 
     </div>
@@ -13881,19 +14028,66 @@ f_i(j) = max(w[j], E(f_{i + 1}))
 <pre>3
 1050 1900 2500 3000
 Вероятности: [0.25, 0.25, 0.25, 0.25]
-День 2 :
-     Если предложили 1050.0 то выгодней продолжить
-     Если предложили 1900.0 то выгодней продолжить
-     Если предложили 2500.0 то выгодней закончить
-     Если предложили 3000.0 то выгодней закончить
-День 1 :
-     Если предложили 1050.0 то выгодней продолжить
-     Если предложили 1900.0 то выгодней продолжить
-     Если предложили 2500.0 то выгодней закончить
-     Если предложили 3000.0 то выгодней закончить
 Ожидание прибыли: 2590.625
 </pre>
 </div>
+</div>
+
+<div class="output_area">
+
+    <div class="prompt output_prompt">Out[30]:</div>
+
+
+
+<div class="output_html rendered_html output_subarea output_execute_result">
+<div>
+<style scoped>
+    .dataframe tbody tr th:only-of-type {
+        vertical-align: middle;
+    }
+
+    .dataframe tbody tr th {
+        vertical-align: top;
+    }
+
+    .dataframe thead th {
+        text-align: right;
+    }
+</style>
+<table border="1" class="dataframe">
+  <thead>
+    <tr style="text-align: right;">
+      <th></th>
+      <th>День 1</th>
+      <th>День 2</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Если предложили 1050.0, то выгодней:</td>
+      <td>подождать</td>
+      <td>подождать</td>
+    </tr>
+    <tr>
+      <td>Если предложили 1900.0, то выгодней:</td>
+      <td>подождать</td>
+      <td>подождать</td>
+    </tr>
+    <tr>
+      <td>Если предложили 2500.0, то выгодней:</td>
+      <td>продать</td>
+      <td>продать</td>
+    </tr>
+    <tr>
+      <td>Если предложили 3000.0, то выгодней:</td>
+      <td>продать</td>
+      <td>продать</td>
+    </tr>
+  </tbody>
+</table>
+</div>
+</div>
+
 </div>
 
 </div>
@@ -14642,7 +14836,7 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
 </div>
 <div class="cell border-box-sizing code_cell rendered">
 <div class="input">
-<div class="prompt input_prompt">In&nbsp;[3]:</div>
+<div class="prompt input_prompt">In&nbsp;[6]:</div>
 <div class="inner_cell">
     <div class="input_area">
 <div class=" highlight hl-ipython3"><pre><span></span><span class="k">class</span> <span class="nc">Bank</span><span class="p">:</span>
@@ -14650,33 +14844,33 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
         <span class="bp">self</span><span class="o">.</span><span class="n">rates</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">rates</span><span class="p">)</span>  <span class="c1"># процентные ставки</span>
         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rates</span><span class="p">)):</span>
             <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
-                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">p</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]</span> <span class="o">*</span> <span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">],</span> <span class="mi">3</span><span class="p">)</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">price</span> <span class="o">=</span> <span class="n">price</span>  <span class="c1"># цена за хранение денег</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">charge_out</span> <span class="o">=</span> <span class="n">charge_out</span>  <span class="c1"># штраф за снятие денег</span>
 
 
-<span class="k">class</span> <span class="nc">LinearFormula</span><span class="p">:</span>
-    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>  <span class="c1"># LinearFormula = self.alpha * S + self.beta</span>
+<span class="k">class</span> <span class="nc">LinearFormula</span><span class="p">:</span> <span class="c1"># линейное выражение от S</span>
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">account</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span> <span class="c1"># LinearFormula = self.alpha * S + self.beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">beta</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">account</span>
 
-    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">const</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">add</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">const</span><span class="p">):</span> <span class="c1"># сложение с константой</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">LinearFormula</span><span class="p">()</span>
         <span class="n">res</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">+</span> <span class="n">const</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">beta</span> <span class="o">+</span> <span class="n">const</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">const</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">mul</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">const</span><span class="p">):</span> <span class="c1"># умножение на константу</span>
         <span class="n">res</span> <span class="o">=</span> <span class="n">LinearFormula</span><span class="p">()</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">const</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="n">const</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">const</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">beta</span> <span class="o">=</span> <span class="nb">round</span><span class="p">(</span><span class="n">const</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
         <span class="k">return</span> <span class="n">res</span>
 
-    <span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
-        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">S</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span>
+    <span class="k">def</span> <span class="nf">do</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span> <span class="c1"># вычисление значения выражения по заданному S</span>
+        <span class="k">return</span> <span class="nb">round</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">S</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">beta</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
 
-    <span class="k">def</span> <span class="nf">str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">make_str</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
         <span class="n">alpha_coef</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
         <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">):</span>
             <span class="n">alpha_coef</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
@@ -14690,8 +14884,12 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
         <span class="n">s</span> <span class="o">=</span> <span class="n">alpha_coef</span> <span class="o">+</span> <span class="s1">&#39;S&#39;</span> <span class="o">+</span> <span class="n">sign_and_beta</span>
         <span class="k">return</span> <span class="n">s</span>
 
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># вывод линейного выражения на экран</span>
+        <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">make_str</span><span class="p">(),</span> <span class="n">end</span><span class="o">=</span><span class="s1">&#39; &#39;</span><span class="p">)</span>
 
-<span class="k">class</span> <span class="nc">MultiLinearFormula</span><span class="p">:</span>
+
+<span class="k">class</span> <span class="nc">MultiLinearFormula</span><span class="p">:</span> <span class="c1"># совокупность линейных выражений</span>
+    <span class="c1"># (в зависимости от значения S коэффициенты alpha и beta принимают разные значения)</span>
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">beta</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">lines</span> <span class="o">=</span> <span class="p">[]</span>
         <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
@@ -14699,26 +14897,39 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
             <span class="n">l</span> <span class="o">=</span> <span class="n">LinearFormula</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
             <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
 
+    <span class="k">def</span> <span class="nf">write</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span> <span class="c1"># вывод мультиформулы на экран</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Printing MLformula&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">line</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
+            <span class="n">line</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Printing finished&#39;</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">max_of_lines</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span>
+
+<span class="k">def</span> <span class="nf">max_of_lines</span><span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">l2</span><span class="p">):</span> <span class="c1"># находим Р - точку пересечения двух прямых</span>
+    <span class="c1"># и определяем max(l1, l2) при S &lt;= P и при S &gt; P </span>
     <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">alpha</span> <span class="o">==</span> <span class="n">l2</span><span class="o">.</span><span class="n">alpha</span><span class="p">):</span>
         <span class="k">if</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">beta</span> <span class="o">&gt;=</span> <span class="n">l2</span><span class="o">.</span><span class="n">beta</span><span class="p">):</span>
             <span class="k">return</span> <span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">l1</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">l2</span><span class="p">,</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
     <span class="k">elif</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">alpha</span> <span class="o">&gt;</span> <span class="n">l2</span><span class="o">.</span><span class="n">alpha</span><span class="p">):</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">l2</span><span class="o">.</span><span class="n">beta</span> <span class="o">-</span> <span class="n">l1</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">alpha</span> <span class="o">-</span> <span class="n">l2</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">l2</span><span class="o">.</span><span class="n">beta</span> <span class="o">-</span> <span class="n">l1</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">alpha</span> <span class="o">-</span> <span class="n">l2</span><span class="o">.</span><span class="n">alpha</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">l2</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l1</span><span class="p">)</span>
     <span class="k">else</span><span class="p">:</span>
-        <span class="n">P</span> <span class="o">=</span> <span class="p">(</span><span class="n">l2</span><span class="o">.</span><span class="n">beta</span> <span class="o">-</span> <span class="n">l1</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">alpha</span> <span class="o">-</span> <span class="n">l2</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">P</span> <span class="o">=</span> <span class="nb">round</span><span class="p">((</span><span class="n">l2</span><span class="o">.</span><span class="n">beta</span> <span class="o">-</span> <span class="n">l1</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">l1</span><span class="o">.</span><span class="n">alpha</span> <span class="o">-</span> <span class="n">l2</span><span class="o">.</span><span class="n">alpha</span><span class="p">),</span> <span class="mi">3</span><span class="p">)</span>
         <span class="k">return</span> <span class="p">(</span><span class="n">l1</span><span class="p">,</span> <span class="n">P</span><span class="p">,</span> <span class="n">l2</span><span class="p">)</span>
+    <span class="c1"># возвращаем max(l1, l2 | {S &lt;= P}), P, max(l1, l2 | {S &gt; P})</span>
 
 
-<span class="k">def</span> <span class="nf">momlf</span><span class="p">(</span><span class="n">ml1</span><span class="p">,</span> <span class="n">ml2</span><span class="p">):</span>  <span class="c1"># max of MultiLinearFormulas</span>
+<span class="k">def</span> <span class="nf">momlf</span><span class="p">(</span><span class="n">ml1</span><span class="p">,</span> <span class="n">ml2</span><span class="p">):</span> <span class="c1"># max of MultiLinearFormulas ml1, ml2</span>
+    <span class="c1"># т. е. находим такую MultiLinearFormula, которая</span>
+    <span class="c1"># для каждого возможного S явялется максимумом из ml1 и ml2</span>
     <span class="n">new_ml</span> <span class="o">=</span> <span class="n">MultiLinearFormula</span><span class="p">()</span>
     <span class="n">i</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">j</span> <span class="o">=</span> <span class="mi">0</span>
     <span class="n">R</span> <span class="o">=</span> <span class="mi">1000</span>
-    <span class="k">while</span> <span class="p">(</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">while</span> <span class="p">(</span><span class="kc">True</span><span class="p">):</span> <span class="c1"># заполняем new_ml.lines и new_ml.points,</span>
+        <span class="c1"># максимизирую (выбирая ml1 или ml2) на каждом из отрезков,</span>
+        <span class="c1"># на которые точки из ml1.points и ml2.points разбивают координатную прямую S</span>
         <span class="n">L</span> <span class="o">=</span> <span class="n">R</span>
         <span class="n">l1</span> <span class="o">=</span> <span class="n">ml1</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
         <span class="n">l2</span> <span class="o">=</span> <span class="n">ml2</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
@@ -14763,33 +14974,35 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
     <span class="k">return</span> <span class="n">new_ml</span>
 
 
-<span class="k">def</span> <span class="nf">put_fotmula_in_formula</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">l_ex</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">put_fotmula_in_formula</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">l_ex</span><span class="p">):</span> <span class="c1"># подставляем l_in в качестве S в l_ex</span>
     <span class="k">return</span> <span class="p">(</span><span class="n">l_in</span><span class="o">.</span><span class="n">mul</span><span class="p">(</span><span class="n">l_ex</span><span class="o">.</span><span class="n">alpha</span><span class="p">))</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">l_ex</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span> <span class="c1"># S &lt;= P, ищем минимально возможное Р, большее S</span>
+<span class="k">def</span> <span class="nf">binary_search</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span> <span class="c1"># ищем минимально возможное Р, большее S</span>
     <span class="n">l</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
     <span class="n">r</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">points</span><span class="p">)</span>
     <span class="k">while</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">l</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">):</span>
         <span class="n">m</span> <span class="o">=</span> <span class="p">(</span><span class="n">l</span> <span class="o">+</span> <span class="n">r</span><span class="p">)</span> <span class="o">//</span> <span class="mi">2</span>
-        <span class="k">if</span> <span class="p">(</span><span class="n">S</span> <span class="o">&lt;=</span> <span class="n">points</span><span class="p">[</span><span class="n">m</span><span class="p">]):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">S</span> <span class="o">&lt;=</span> <span class="n">points</span><span class="p">[</span><span class="n">m</span><span class="p">]):</span> <span class="c1"># S &lt;= P</span>
             <span class="n">r</span> <span class="o">=</span> <span class="n">m</span>
         <span class="k">else</span><span class="p">:</span>
             <span class="n">l</span> <span class="o">=</span> <span class="n">r</span>
 
     <span class="k">return</span> <span class="n">r</span>
 
-<span class="k">def</span> <span class="nf">do_formula</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">do_formula</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span> <span class="c1"># вычислить значение ml, подставив S</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ml</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">do</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
 
-<span class="k">def</span> <span class="nf">find_move</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">find_move</span><span class="p">(</span><span class="n">ml</span><span class="p">,</span> <span class="n">S</span><span class="p">):</span> <span class="c1"># в какой банк надо положить сумму S,</span>
+    <span class="c1"># чтобы ml приняло оптимальное значение</span>
     <span class="n">i</span> <span class="o">=</span> <span class="n">binary_search</span><span class="p">(</span><span class="n">ml</span><span class="o">.</span><span class="n">points</span><span class="p">,</span> <span class="n">S</span><span class="p">)</span>
     <span class="k">return</span> <span class="n">ml</span><span class="o">.</span><span class="n">lines</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">account</span>
 
-<span class="k">def</span> <span class="nf">put_formula_in_multiformula</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">l_ex</span><span class="p">,</span> <span class="n">account</span><span class="p">):</span>
+<span class="k">def</span> <span class="nf">put_formula_in_multiformula</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">l_ex</span><span class="p">,</span> <span class="n">account</span><span class="p">):</span> <span class="c1"># подставить ф-лу в качестве S в</span>
+    <span class="c1"># мультиформулу</span>
     <span class="n">res</span> <span class="o">=</span> <span class="n">MultiLinearFormula</span><span class="p">()</span>
     <span class="k">for</span> <span class="n">P</span> <span class="ow">in</span> <span class="n">l_ex</span><span class="o">.</span><span class="n">points</span><span class="p">:</span>
-        <span class="n">res</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">P</span> <span class="o">-</span> <span class="n">l_in</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">l_in</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">round</span><span class="p">((</span><span class="n">P</span> <span class="o">-</span> <span class="n">l_in</span><span class="o">.</span><span class="n">beta</span><span class="p">)</span> <span class="o">/</span> <span class="n">l_in</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
     <span class="k">for</span> <span class="n">l</span> <span class="ow">in</span> <span class="n">l_ex</span><span class="o">.</span><span class="n">lines</span><span class="p">:</span>
         <span class="n">new_line</span> <span class="o">=</span> <span class="n">put_fotmula_in_formula</span><span class="p">(</span><span class="n">l_in</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
         <span class="n">new_line</span><span class="o">.</span><span class="n">account</span> <span class="o">=</span> <span class="n">account</span>
@@ -14798,32 +15011,47 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
 
 
 <span class="n">n</span> <span class="o">=</span> <span class="mi">3</span>
-<span class="n">A</span> <span class="o">=</span> <span class="n">Bank</span><span class="p">([[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">9</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]],</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
-<span class="n">B</span> <span class="o">=</span> <span class="n">Bank</span><span class="p">([[</span><span class="mi">7</span><span class="p">],</span> <span class="p">[</span><span class="mi">5</span><span class="p">]],</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+<span class="n">A</span> <span class="o">=</span> <span class="n">Bank</span><span class="p">([[</span><span class="mf">1.08</span><span class="p">,</span> <span class="mf">1.12</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.05</span><span class="p">,</span> <span class="mf">1.09</span><span class="p">]],</span> <span class="p">[[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]],</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">10</span><span class="p">)</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">Bank</span><span class="p">([[</span><span class="mf">1.07</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.05</span><span class="p">]],</span> <span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
 <span class="n">f</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">f_star</span> <span class="o">=</span> <span class="p">{}</span>
+<span class="n">f_star</span> <span class="o">=</span> <span class="p">{}</span> <span class="c1"># f*</span>
 <span class="n">best_move</span> <span class="o">=</span> <span class="p">{}</span>
-<span class="n">f_star</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultiLinearFormula</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">charge_out</span><span class="p">)</span>
-<span class="n">f_star</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultiLinearFormula</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<span class="n">f_star</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultiLinearFormula</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">charge_out</span><span class="p">)</span> <span class="c1"># f*(n - 1, A) = S - -A.charge_out</span>
+<span class="n">f_star</span><span class="p">[</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="n">MultiLinearFormula</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span> <span class="c1"># f*(n - 1, B) = S</span>
 <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">):</span>
     <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">put_formula_in_multiformula</span><span class="p">(</span><span class="n">LinearFormula</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">price</span><span class="p">),</span> <span class="n">f_star</span><span class="p">[</span>
-        <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>  <span class="c1"># хотим в выражение f_star[i + 1, A] подставить выражение S * A.rates[i] - A.price</span>
-    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="n">put_formula_in_multiformula</span><span class="p">(</span><span class="n">LinearFormula</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">charge_out</span> <span class="o">*</span> <span class="n">B</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">B</span><span class="o">.</span><span class="n">price</span><span class="p">),</span> <span class="n">f_star</span><span class="p">[</span>
-        <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>  <span class="c1"># хотим в выражение f_star[i + 1, B] подставить выражение (S - A.charge_out) * B.rates[i] - B.price</span>
+        <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>  <span class="c1"># хотим в выражение f_star[i + 1, A]</span>
+    <span class="c1"># подставить выражение S * A.rates[i] - A.price</span>
+    <span class="c1"># используем write для вывода промежуточных формул и точек</span>
+    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="n">put_formula_in_multiformula</span><span class="p">(</span><span class="n">LinearFormula</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="nb">round</span><span class="p">(</span><span class="o">-</span><span class="n">A</span><span class="o">.</span><span class="n">charge_out</span> <span class="o">*</span> <span class="n">B</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">B</span><span class="o">.</span><span class="n">price</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">f_star</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span>
+    <span class="c1"># хотим в выражение f_star[i + 1, B]</span>
+    <span class="c1"># подставить выражение (S - A.charge_out) * B.rates[i] - B.price</span>
+    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
     <span class="n">f_star</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">momlf</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">])</span>
-    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">put_formula_in_multiformula</span><span class="p">(</span><span class="n">LinearFormula</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">B</span><span class="o">.</span><span class="n">charge_out</span> <span class="o">*</span> <span class="n">A</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">A</span><span class="o">.</span><span class="n">price</span><span class="p">),</span> <span class="n">f_star</span><span class="p">[</span>
-        <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span> <span class="c1"># хотим в выражение f_star[i + 1, A] подставить выражение (S - B.charge_out) * A.rates[i] - A.price</span>
+    <span class="n">f_star</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
+    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span> <span class="o">=</span> <span class="n">put_formula_in_multiformula</span><span class="p">(</span><span class="n">LinearFormula</span><span class="p">(</span><span class="n">A</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span>
+        <span class="nb">round</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">charge_out</span> <span class="o">*</span> <span class="n">A</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">A</span><span class="o">.</span><span class="n">price</span><span class="p">,</span> <span class="mi">3</span><span class="p">)),</span> <span class="n">f_star</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="s1">&#39;A&#39;</span><span class="p">)</span>
+    <span class="c1"># хотим в выражение f_star[i + 1, A]</span>
+    <span class="c1"># подставить выражение (S - B.charge_out) * A.rates[i] - A.price</span>
+    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
     <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="n">put_formula_in_multiformula</span><span class="p">(</span><span class="n">LinearFormula</span><span class="p">(</span><span class="n">B</span><span class="o">.</span><span class="n">rates</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="o">-</span><span class="n">B</span><span class="o">.</span><span class="n">price</span><span class="p">),</span> <span class="n">f_star</span><span class="p">[</span>
-        <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span> <span class="c1"># хотим в выражение f_star[i + 1, B] подставить выражение  S * B.rates[i] - B.price</span>
+        <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="s1">&#39;B&#39;</span><span class="p">)</span> <span class="c1"># хотим в выражение f_star[i + 1, B]</span>
+    <span class="c1"># подставить выражение  S * B.rates[i] - B.price</span>
+    <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
     <span class="n">f_star</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span> <span class="o">=</span> <span class="n">momlf</span><span class="p">(</span><span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">A</span><span class="p">],</span> <span class="n">f</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">,</span> <span class="n">B</span><span class="p">])</span>
+    <span class="n">f_star</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">B</span><span class="p">]</span><span class="o">.</span><span class="n">write</span><span class="p">()</span>
 
-
-<span class="n">S</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span>
-<span class="n">S_ans</span> <span class="o">=</span> <span class="n">do_formula</span><span class="p">(</span><span class="n">f_star</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="n">S</span><span class="p">)</span>
-<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;S3 =&#39;</span><span class="p">,</span> <span class="n">S_ans</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Введите S0&#39;</span><span class="p">)</span>
+<span class="n">S</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">input</span><span class="p">())</span> <span class="c1"># считываем значение S0</span>
+<span class="n">S3</span> <span class="o">=</span> <span class="n">do_formula</span><span class="p">(</span><span class="n">f_star</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="n">B</span><span class="p">],</span> <span class="n">S</span><span class="p">)</span> <span class="c1"># находим оптимальное S3</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;S3 =&#39;</span><span class="p">,</span> <span class="n">S3</span><span class="p">)</span>
 <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
 <span class="n">acc</span> <span class="o">=</span> <span class="n">B</span>
-<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span> <span class="c1"># восстанавливаем последовательность действий,</span>
+    <span class="c1"># которые привели нас к оптимальному ответу</span>
     <span class="n">move</span> <span class="o">=</span> <span class="n">find_move</span><span class="p">(</span><span class="n">f_star</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">acc</span><span class="p">],</span> <span class="n">S</span><span class="p">)</span>
     <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;этап&#39;</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="s1">&#39;- кладём в банк&#39;</span><span class="p">,</span> <span class="n">move</span><span class="p">)</span>
     <span class="k">if</span> <span class="p">(</span><span class="n">move</span> <span class="o">==</span> <span class="s1">&#39;A&#39;</span><span class="p">):</span>
@@ -14846,10 +15074,48 @@ $p_1 (\alpha k_1 S + \beta) + p_2(\alpha k_2 S + \beta) = \alpha p_1 k_1 S + p_1
 
 
 <div class="output_subarea output_stream output_stdout output_text">
-<pre>1010
-S3 = 49460.0
+<pre>Printing MLformula
 
-этап 0 - кладём в банк B
+1.07S - 30 Printing finished
+Printing MLformula
+
+1.05S - 10.5 Printing finished
+Printing MLformula
+
+1.07S - 30 Printing finished
+Printing MLformula
+
+1.07S - 30.0 Printing finished
+Printing MLformula
+
+1.05S Printing finished
+Printing MLformula
+1500.0
+1.05S 1.07S - 30.0 Printing finished
+Printing MLformula
+
+1.177S - 51.4 Printing finished
+Printing MLformula
+1411.869
+1.124S - 11.235 1.145S - 41.449 Printing finished
+Printing MLformula
+1411.869
+1.177S - 51.4 1.177S - 51.4 Printing finished
+Printing MLformula
+
+1.177S - 51.4 Printing finished
+Printing MLformula
+1401.869
+1.124S 1.145S - 30.0 Printing finished
+Printing MLformula
+1401.869
+1.177S - 51.4 1.177S - 51.4 Printing finished
+
+Введите S0
+1010
+S3 = 1137.37
+
+этап 0 - кладём в банк A
 этап 1 - кладём в банк A
 </pre>
 </div>
